@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path');
-const notesData = require('./develop/db/db.json');
+const notesData = require('./db/db.json');
 
 const notes = require('./public/notes.html');
 const noteRecord = require('./public/index.html');
@@ -57,6 +57,7 @@ app.post('/api/notes', (req, res) => {
       res.status(200).json({ status: "success" })
     })
   })
-  app.listen(PORT, () => {
-    console.log(`Example app listening at http://localhost:${PORT}`)
-  })
+})
+app.listen(PORT, () =>
+  console.log(`Express server listening on port ${PORT}!`)
+)
