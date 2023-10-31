@@ -2,8 +2,8 @@ const express = require('express');
 const path = require('path');
 const notesData = require('./develop/db/db.json');
 
-const notes = require('./develop/public/notes.html');
-const noteRecord = require('./develop/public/index.html');
+const notes = require('./public/notes.html');
+const noteRecord = require('./public/index.html');
 const PORT = 3001;
 
 const app = express();
@@ -20,32 +20,43 @@ app.post('/api/notes', (req, res) => {
   // Log that a POST request was received
   console.info(`${req.method} request received to add a note`);
 
-  // Destructuring assignment for the items in req.body
-  const { product, review, username } = req.body;
-
-  // If all the required properties are present
-  if (product && review && username) {
-    // Variable for the object we will save
-    const newReview = {
-      product,
-      review,
-      username,
-      review_id: uuid(),
-    };
-
-    const response = {
-      status: 'success',
-      body: newReview,
-    };
-
-    console.log(response);
-    res.status(201).json(response);
-  } else {
-    res.status(500).json('Error in posting review');
-  }
-});
+  app.post("/api/newuser", (req, res) => {
 
 
-app.listen(PORT, () => {
-  console.log(`Example app listening at http://localhost:${PORT}`);
-});
+    console.log(req.body)
+    const dataToSave = `
+  user: ${req.body.newuser}
+  email: ${req.body.email}
+  phone: ${req.body.phone}
+`
+
+    console.log(dataToSave)
+    fs.writeFile("signup.txt", dataToSave, (err) => {
+      if (err) return res.status(500).json({ status: "error" })
+      res.status(200).json({ status: "success" })
+    })
+  })
+
+  app.listen(PORT, () =>
+    console.log(`Express server listening on port ${PORT}!`)
+  );
+
+
+  app.post("/api/notes", (req, res) => {
+
+
+    console.log(req.body)
+    const noteToSave = `
+  noteTitle: ${req.body.notTitle}
+  noteTextarea: ${req.body.noteTextarea}
+`
+
+    console.log(noteToSave)
+    fs.writeFile("note", noteToSave, (err) => {
+      if (err) return res.status(500).json({ status: "error" })
+      res.status(200).json({ status: "success" })
+    })
+  })
+  app.listen(PORT, () => {
+    console.log(`Example app listening at http://localhost:${PORT}`)
+  })
