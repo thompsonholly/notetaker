@@ -2,8 +2,11 @@ const express = require('express');
 const path = require('path');
 const notesData = require('./db/db.json');
 
-const notes = require('./public/notes.html');
-const noteRecord = require('./public/index.html');
+// Helper functions for reading and writing to the JSON file
+const { readFromFile, writeToFile, readAndAppend } = require('./helpers/fsUtils');
+const uniqueId = require('./helpers/uuid')
+//console.log('random number', uniqueId());
+
 const PORT = 3001;
 
 const app = express();
@@ -11,53 +14,75 @@ const app = express();
 app.use(express.static('public'));
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
+  res.sendFile(path.join(__dirname, './public/index.html'));
 });
 
-app.get('/api/notes', (req, res) => res.json(notesData));
+app.get('/notes', (req, res) => {
+  //console.log('__dirname is', __dirname);
+  //console.log('joined result:', path.join(__dirname, './public/notes.html'))
+  res.sendFile(path.join(__dirname, './public/notes.html'));
+});
 
-app.post('/api/notes', (req, res) => {
-  // Log that a POST request was received
-  console.info(`${req.method} request received to add a note`);
+app.get('/api/notes', (req, res) => {
+  // when we hit this route, we want to read a file and then return its content in the form of json data
 
-  app.post("/api/newuser", (req, res) => {
+  // first we read the file--how do we do that using the built-in fs module belonging to Node
+  // use the imported helper functions
 
-
-    console.log(req.body)
-    const dataToSave = `
-  user: ${req.body.newuser}
-  email: ${req.body.email}
-  phone: ${req.body.phone}
-`
-
-    console.log(dataToSave)
-    fs.writeFile("signup.txt", dataToSave, (err) => {
-      if (err) return res.status(500).json({ status: "error" })
-      res.status(200).json({ status: "success" })
-    })
-  })
-
-  app.listen(PORT, () =>
-    console.log(`Express server listening on port ${PORT}!`)
-  );
-
-
-  app.post("/api/notes", (req, res) => {
-
-
-    console.log(req.body)
-    const noteToSave = `
-  noteTitle: ${req.body.notTitle}
-  noteTextarea: ${req.body.noteTextarea}
-`
-
-    console.log(noteToSave)
-    fs.writeFile("note", noteToSave, (err) => {
-      if (err) return res.status(500).json({ status: "error" })
-      res.status(200).json({ status: "success" })
-    })
-  })
+  readFromFile('./db/db.json').then((data) => res.json(JSON.parse(data)));
 })
+
+
+//   app.post("/api/newuser", (req, res) => {
+
+
+//     console.log(req.body)
+//     const dataToSave = `
+//   user: ${req.body.newuser}
+//   email: ${req.body.email}
+//   phone: ${req.body.phone}
+// `
+
+//     console.log(dataToSave)
+//     fs.writeFile("signup.txt", dataToSave, (err) => {
+//       if (err) return res.status(500).json({ status: "error" })
+//       res.status(200).json({ status: "success" })
+//     })
+//   })
+
+
+app.post("/api/notes", (req, res) => {
+
+  const noteToSave = {
+    title: req.body.title,
+    text: req.body.text,
+    id: uniqueId()
+  }
+
+  readAndAppend(noteToSave, "./db/db.json")
+
+
+  // read your file contents first
+  readFromFile('./db/db.json').then((existingNotesData) => {
+    //res.json(JSON.parse(data)));
+    // let's console what the existing notes look like, i.e is it an array, an object, etc
+    console.log('Existing notes are:', existingNotesData);
+    // add the new note to the file
+
+    // overwrite or save the file again
+
+
+
+    res.json("all good");
+  })
+  // fs.writeFile("note", noteToSave, (err) => {
+  //   if (err) return res.status(500).json({ status: "error" })
+  //   res.status(200).json({ status: "success" })
+  // })
+  writeToFile(noteToSave, existingNotesData)
+})
+
+
 app.listen(PORT, () =>
   console.log(`Express server listening on port ${PORT}!`)
 )
