@@ -10,7 +10,7 @@ const { readFromFile, writeToFile, readAndAppend } = require('./helpers/fsUtils'
 const { v4: uuidv4 } = require('uuid')
 const noteId = uuidv4()
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 const app = express();
 
