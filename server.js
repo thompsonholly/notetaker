@@ -4,23 +4,28 @@ const notesData = require('./db/db.json');
 
 // Helper functions for reading and writing to the JSON file
 const { readFromFile, writeToFile, readAndAppend } = require('./helpers/fsUtils');
-const uniqueId = require('./helpers/uuid')
+
 //console.log('random number', uniqueId());
+
+const { v4: uuidv4 } = require('uuid')
+const noteId = uuidv4()
 
 const PORT = 3001;
 
 const app = express();
 
 app.use(express.static('public'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, './public/index.html'));
+  res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
 app.get('/notes', (req, res) => {
   //console.log('__dirname is', __dirname);
   //console.log('joined result:', path.join(__dirname, './public/notes.html'))
-  res.sendFile(path.join(__dirname, './public/notes.html'));
+  res.sendFile(path.join(__dirname, 'public/notes.html'));
 });
 
 app.get('/api/notes', (req, res) => {
@@ -30,57 +35,41 @@ app.get('/api/notes', (req, res) => {
   // use the imported helper functions
 
   readFromFile('./db/db.json').then((data) => res.json(JSON.parse(data)));
+});
+
+app.delete('/api/notes/:id', (req, res) => {
+  db.query(`DELETE FROM movies WHERE id = ?`, req.params.id, (err, results) => {
+    if (err) {
+      console.log(err);
+    }
+    res.send(results);
+  });
 })
 
-
-//   app.post("/api/newuser", (req, res) => {
-
-
-//     console.log(req.body)
-//     const dataToSave = `
-//   user: ${req.body.newuser}
-//   email: ${req.body.email}
-//   phone: ${req.body.phone}
-// `
-
-//     console.log(dataToSave)
-//     fs.writeFile("signup.txt", dataToSave, (err) => {
-//       if (err) return res.status(500).json({ status: "error" })
-//       res.status(200).json({ status: "success" })
-//     })
-//   })
-
-
-app.post("/api/notes", (req, res) => {
-
+app.post('/api/notes', (req, res) => {
+  console.log(req.body);
   const noteToSave = {
     title: req.body.title,
     text: req.body.text,
-    id: uniqueId()
+    id: uuidv4()
   }
-
   readAndAppend(noteToSave, "./db/db.json")
 
+  let response;
+  if (req.body.title && req.body.text) {
+    response = {
+      status: 'Hooray',
+      data: req.body,
+    };
+    res.json(`Note ${response.data.title} && ${response.data.text} has been added`)
+  } else {
+    res.json('All fields must have input.')
+  }
 
-  // read your file contents first
-  readFromFile('./db/db.json').then((existingNotesData) => {
-    //res.json(JSON.parse(data)));
-    // let's console what the existing notes look like, i.e is it an array, an object, etc
-    console.log('Existing notes are:', existingNotesData);
-    // add the new note to the file
-
-    // overwrite or save the file again
+  console.log(req.body);
 
 
-
-    res.json("all good");
-  })
-  // fs.writeFile("note", noteToSave, (err) => {
-  //   if (err) return res.status(500).json({ status: "error" })
-  //   res.status(200).json({ status: "success" })
-  // })
-  writeToFile(noteToSave, existingNotesData)
-})
+});
 
 
 app.listen(PORT, () =>
