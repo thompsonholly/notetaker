@@ -37,14 +37,6 @@ app.get('/api/notes', (req, res) => {
   readFromFile('./db/db.json').then((data) => res.json(JSON.parse(data)));
 });
 
-app.delete('/api/notes/:id', (req, res) => {
-  db.query(`DELETE FROM movies WHERE id = ?`, req.params.id, (err, results) => {
-    if (err) {
-      console.log(err);
-    }
-    res.send(results);
-  });
-})
 
 app.post('/api/notes', (req, res) => {
   console.log(req.body);
