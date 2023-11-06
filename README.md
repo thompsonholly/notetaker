@@ -13,7 +13,7 @@ You can simply enter in a note title and text to create your note. Hit the save 
 
 ## Heroku App Link
 
-https://homework12-791bbaedb057.herokuapp.com/
+(https://homework12-791bbaedb057.herokuapp.com/)
 
 ## Github Link
 
