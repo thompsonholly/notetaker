@@ -17,3 +17,6 @@ You can simply enter in a note title and text to create your note. Hit the save 
 
 ## Github Link
 
+(https://thompsonholly.github.io/notetaker/)
+
+
