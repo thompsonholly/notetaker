@@ -1,1 +1,22 @@
-[]
+[
+    {
+        "title": "Grocery Shopping",
+        "text": "Eggs\nMilk\nCereal",
+        "id": "4f02f784-12e9-477e-9f82-dc9f70f33294"
+    },
+    {
+        "title": "Chores",
+        "text": "Mow lawn\nSort laundry\nUnload dishwasher",
+        "id": "ed9fc59f-b02d-41ed-98d7-20f4b8152ace"
+    },
+    {
+        "title": "Movie List",
+        "text": "The Shining\nThe Exorcist\nOld\nThe Lego Movie\n",
+        "id": "7dec6955-bc9a-4ead-a713-cac938b5c4ef"
+    },
+    {
+        "title": "To Do",
+        "text": "Send Christmas cards\nPlan menu for Thanksgiving\nThrow Halloween pumpkins away",
+        "id": "9715be5d-ec4a-46fd-bd73-564be1bb2fab"
+    }
+]

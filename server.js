@@ -75,11 +75,11 @@ app.delete("/api/notes/:id", (req, res) => {
 
   // Delete Item from Database
   const deletedItem = notesData.filter(item => item.id === reqID);
-  const newDatabase = notesData.filter(item => item.id !== reqID);
-  fs.writeFile(path.join(__dirname, notesData), JSON.stringify(newDatabase), (err) => {
+  notesData = notesData.filter(item => item.id !== reqID);
+  fs.writeFile("./db/db.json", JSON.stringify(notesData), (err) => {
     if (err) return res.status(500).json({ status: "error", body: 'Error deleting item from database' });
     console.log(deletedItem);
-    res.status(200).json({ status: "success", body: deletedItem });
+    return res.status(200).json({ status: "success", body: deletedItem });
   });
 });
 // });
