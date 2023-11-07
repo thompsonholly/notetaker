@@ -63,7 +63,29 @@ app.post('/api/notes', (req, res) => {
 
 });
 
+// Delete note
+app.delete("/api/notes/:id", (req, res) => {
+  console.info(`${req.method} to delete note`);
+  const reqID = req.params.id;
+
+  // // Read notes from database 
+  // fs.readFile(path.join(__dirname, databasePath), 'utf8', (err, data) => {
+  //   if (err) return res.status(500).json({ status: "error", body: 'Error reading from database' });
+  //   const database = JSON.parse(data);
+
+  // Delete Item from Database
+  const deletedItem = notesData.filter(item => item.id === reqID);
+  const newDatabase = notesData.filter(item => item.id !== reqID);
+  fs.writeFile(path.join(__dirname, notesData), JSON.stringify(newDatabase), (err) => {
+    if (err) return res.status(500).json({ status: "error", body: 'Error deleting item from database' });
+    console.log(deletedItem);
+    res.status(200).json({ status: "success", body: deletedItem });
+  });
+});
+// });
+
+
+
 
 app.listen(PORT, () =>
-  console.log(`Express server listening on port ${PORT}!`)
-)
+  console.log(`Express server listening on port ${PORT}!`))
